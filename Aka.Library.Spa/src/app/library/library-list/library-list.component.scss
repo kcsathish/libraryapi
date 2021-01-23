@@ -1,9 +1,10 @@
 /* Column Widths */
+
 .mat-column-libraryId {
-  max-width: 64px;
+    max-width: 64px;
 }
 
 .example-container {
-  display: inline-flex;
-  flex-direction: row;
+    display: flex;
+    flex-direction: column;
 }

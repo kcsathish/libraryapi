@@ -21,12 +21,10 @@ export class BooksService {
     this.googleBooksAPIKey = 'AIzaSyCCN_lQcnEQ51ohoDBroFvfwN8wnJi9iPY';
   }
 
-  getBooks(libraryId: number): Observable<Book[]> {
+  getBooks(libraryId: number): Observable<Book[]>{
     const url = `${this.apiUrl}${libraryId}/books`;
-    return this.http.get<LibraryBook[]>(url)
-      .pipe(
-        map(items => items.map(item => item.book))
-      );
+    // return this.http.get<LibraryBook[]>(url);
+    return this.http.get<Book[]>(url);
   }
 
   getBook(libraryId: number, bid: number): Observable<Book> {

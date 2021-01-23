@@ -1,5 +1,5 @@
 import { environment } from './../../environments/environment';
-import { Observable, BehaviorSubject } from 'rxjs';
+import { Observable, BehaviorSubject, of } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Member } from '../members/interfaces/member';
@@ -20,13 +20,15 @@ export class AuthService {
   private loggedIn = new BehaviorSubject<boolean>(false);
 
   get isLoggedIn() {
-    return this.loggedIn.asObservable();
+    return of(true);//this.loggedIn.asObservable();
   }
 
   login(memberId: number): Observable<Member> {
     return this.http.get<Member>(`${this.apiUrl}/${memberId}`)
       .pipe(
         tap(res => {
+          console.log(res.memberId);
+          
           this.isAuthenticated = res !== null;
           this.currentMember = res;
         })
