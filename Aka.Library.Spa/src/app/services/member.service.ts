@@ -4,6 +4,7 @@ import { environment } from '../../environments/environment';
 import { Observable } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { SignedOutBook } from '../shared/signed-out-book';
+import { MemberBook } from '../members/interfaces/member-book';
 
 @Injectable()
 export class MemberService {
@@ -36,5 +37,15 @@ export class MemberService {
 
   getMemberBookHistory(member: Member): Observable<SignedOutBook []> {
     return this.http.get<SignedOutBook[]>(`${this.apiUrl}/${member.memberId}/books/history`);
+  }
+
+  getProfileSignedOutBooks(member: Member): Observable<MemberBook []> {
+    console.log('getSignedOutBooks');
+    
+    return this.http.get<MemberBook[]>(`${this.apiUrl}/${member.memberId}/books/signedOut`);
+  }
+
+  getProfileMemberBookHistory(member: Member): Observable<MemberBook []> {
+    return this.http.get<MemberBook[]>(`${this.apiUrl}/${member.memberId}/books/history`);
   }
 }

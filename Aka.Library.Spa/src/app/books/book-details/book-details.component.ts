@@ -53,7 +53,8 @@ export class BookDetailsComponent implements OnInit {
    */
   isMaximumNumberOfBooksSignedOut(): boolean {
     // TODO: Implement check
-    return false;
+    // return false;
+    return !this.numBooksSignedOut;
   }
 
   checkOutBook() {
@@ -89,7 +90,7 @@ export class BookDetailsComponent implements OnInit {
    * @param {number} bookId
    * @memberof BookDetailsComponent
    */
-  getBookDetails(libraryId: number, bookId: number) {
+  getBookDetails(libraryId: number, bookId: number) {    
     forkJoin([
       this.books.getBook(libraryId, bookId),
       this.books.getNumberOfAvailableBookCopies(libraryId, bookId),
@@ -98,24 +99,32 @@ export class BookDetailsComponent implements OnInit {
       take(1),
       tap(([book, numberOfAvailableCopies, signedOutBooks]) => {
         this.numBooksSignedOut = signedOutBooks.length;
-        this.numBooksAvailable = numberOfAvailableCopies;
+        this.numBooksAvailable = numberOfAvailableCopies;        
         this.numOfThisBookSignedOutByUser = filter(signedOutBooks, (signedOutBook) => signedOutBook.bookId === book.bookId).length;
         const isbn = book.isbn;
+        console.log('this isbn'+isbn);
+        
         this.books.getBookMetaData(isbn)
           .pipe(take(1))
           .subscribe((bookMetadata: GoogleBooksMetadata) => {
+            console.log("book-meta",bookMetadata);           
             this.bookMetadata = bookMetadata;
           });
       }),
       map(([book, numberOfAvailableCopies, signedOutBooks]) => {
         const areBooksAvailable = numberOfAvailableCopies > 0;
         const hasUserCheckedThisBookOut = !!find(signedOutBooks, { bookId: book.bookId });
+        console.log("booksavailable",hasUserCheckedThisBookOut);
+        this.book = book;
+        
         return { ...book, isAvailable: areBooksAvailable, isCheckedOut: hasUserCheckedThisBookOut };
       }),
       catchError(err => {
+        console.log('eerrr');
+        
         return throwError(err);
       })
-    );
+    ).subscribe();
   }
 
 }

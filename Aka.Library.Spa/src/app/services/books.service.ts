@@ -4,11 +4,12 @@ import { Book } from '../shared/book';
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { SignedOutBook } from '../shared/signed-out-book';
-import { map } from 'lodash';
+// import { map } from 'lodash';
 import { GoogleBooksMetadata } from '../shared/google-books-metadata';
 import { Observable } from 'rxjs/internal/Observable';
 import { throwError } from 'rxjs/internal/observable/throwError';
 import { of } from 'rxjs/internal/observable/of';
+import { map } from 'rxjs/operators';
 
 @Injectable()
 export class BooksService {
@@ -21,14 +22,18 @@ export class BooksService {
     this.googleBooksAPIKey = 'AIzaSyCCN_lQcnEQ51ohoDBroFvfwN8wnJi9iPY';
   }
 
-  getBooks(libraryId: number): Observable<Book[]>{
+  getBooks(libraryId: number): Observable<Book[]> {
     const url = `${this.apiUrl}${libraryId}/books`;
-    // return this.http.get<LibraryBook[]>(url);
-    return this.http.get<Book[]>(url);
+    return this.http.get<LibraryBook[]>(url)
+      .pipe(
+        map(items => items.map(item => item.book))
+      );
   }
 
   getBook(libraryId: number, bid: number): Observable<Book> {
     const url = `${this.apiUrl}${libraryId}/books/${bid}`;
+    console.log(url);
+    
     return this.http.get<Book>(url);
   }
 
@@ -65,8 +70,10 @@ export class BooksService {
    * @memberof BooksService
    */
   getNumberOfAvailableBookCopies(libraryId: number, bookId: number): Observable<number> {
-    // TODO: Add implementation
-    return throwError('Not Implemented');
+    const url = `${this.apiUrl}${libraryId}/books/${bookId}`;
+    console.log(url);
+    return of(2);
+    // return this.http.post<number>(url, {});
   }
 
   checkOutBook(libraryId: number, bookId: number, memberId: number): Observable<SignedOutBook> {
@@ -90,9 +97,10 @@ export class BooksService {
   getBookMetaData(isbn: string): Observable<GoogleBooksMetadata> {
     // TODO: Add implementation
     const url = `https://www.googleapis.com/books/v1/volumes?q=isbn:${isbn}&key=${this.googleBooksAPIKey}`;
+console.log(url);
 
     return this.http.get<GoogleBooksMetadata>(url);
-    return throwError('Funtion not implemented');
+    // return throwError('Funtion not implemented');
 
   }
 

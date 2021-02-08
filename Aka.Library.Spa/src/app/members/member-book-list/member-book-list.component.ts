@@ -1,7 +1,7 @@
 import { MemberBook } from './../../members/interfaces/member-book';
 import { SelectionModel } from '@angular/cdk/collections';
 import { MatTableDataSource, MatSort, MatPaginator } from '@angular/material';
-import { Component, OnInit, Input, ViewChild, AfterViewInit, HostBinding } from '@angular/core';
+import { Component, OnInit, Input, ViewChild, AfterViewInit, HostBinding, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { slideInDownAnimation } from '../../animations';
 import { Library } from '../../shared/library';
 
@@ -9,7 +9,8 @@ import { Library } from '../../shared/library';
   selector: 'app-member-book-list',
   templateUrl: './member-book-list.component.html',
   styleUrls: ['./member-book-list.component.scss'],
-  animations: [ slideInDownAnimation ]
+  animations: [ slideInDownAnimation ],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class MemberBookListComponent implements OnInit, AfterViewInit {
   @HostBinding('@routeAnimation') routeAnimation = true;
@@ -26,12 +27,10 @@ export class MemberBookListComponent implements OnInit, AfterViewInit {
 
   @Input()
   set memberBooks(value: MemberBook[]){
-    this.currentLibrary = null;
-
     this.dataSource.data = value;
   }
 
-  constructor() { }
+  constructor(private ref: ChangeDetectorRef) { }
 
   applyFilter(filterValue: string) {
     filterValue = filterValue.trim(); // Remove whitespace

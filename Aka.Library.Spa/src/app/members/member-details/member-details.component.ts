@@ -8,6 +8,7 @@ import { Member } from '../interfaces/member';
 import { switchMap, tap } from 'rxjs/operators';
 import { AuthService } from '../../services/auth.service';
 import { MemberBook } from '../interfaces/member-book';
+import { SignedOutBook } from '../../shared/signed-out-book';
 
 @Component({
   selector: 'app-member-details',
@@ -28,6 +29,8 @@ export class MemberDetailsComponent implements OnInit {
   member$: Observable<Member>;
   bookhistory$: Observable<MemberBook[]>;
   signedout$: Observable<MemberBook[]>;
+  memberId: number;
+  member: Member;
 
   constructor(
     private route: ActivatedRoute,
@@ -53,8 +56,18 @@ export class MemberDetailsComponent implements OnInit {
           this.firstName = m.fullName.split(' ')[0];
           this.lastName = m.fullName.split(' ')[1];
           this.postalCode = m.postalCode;
+          
+          this.member = m;
+          this.signedout$ = this.service.getProfileSignedOutBooks(m);
+          this.bookhistory$=this.service.getProfileMemberBookHistory(m);
+          
         })
-      );
+        );
+  }
+ 
+  ngAfterViewInit(){
+    console.log("member",this.firstName);
+    
   }
 
   onSubmit() {

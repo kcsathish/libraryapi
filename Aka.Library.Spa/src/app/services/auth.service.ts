@@ -20,7 +20,10 @@ export class AuthService {
   private loggedIn = new BehaviorSubject<boolean>(false);
 
   get isLoggedIn() {
-    return of(true);//this.loggedIn.asObservable();
+    this.loggedIn.next(this.isAuthenticated);
+    console.log(this.isAuthenticated);
+    
+    return this.loggedIn.asObservable();
   }
 
   login(memberId: number): Observable<Member> {
